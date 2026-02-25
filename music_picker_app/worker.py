@@ -4,8 +4,8 @@ from pathlib import Path
 
 from PySide6.QtCore import QObject, Signal, Slot
 
-from .downloader import AudioDownloader
-from .models import DownloadResult, ProgressUpdate
+from .downloader import MediaDownloader
+from .models import BrowserName, CookieSource, DownloadMode, DownloadResult, DownloadTask, ProgressUpdate, VideoQuality
 
 
 class DownloadWorker(QObject):
@@ -17,11 +17,26 @@ class DownloadWorker(QObject):
     all_done = Signal(int, int)
     finished = Signal()
 
-    def __init__(self, urls: list[str], output_dir: Path, max_retries: int = 0) -> None:
+    def __init__(
+        self,
+        tasks: list[DownloadTask],
+        output_dir: Path,
+        max_retries: int = 0,
+        mode: DownloadMode = "audio",
+        video_quality: VideoQuality = "auto",
+        cookie_source: CookieSource = "none",
+        browser_name: BrowserName = "edge",
+        cookie_file: Path | None = None,
+    ) -> None:
         super().__init__()
-        self.urls = urls
+        self.tasks = tasks
         self.output_dir = output_dir
         self.max_retries = max(0, max_retries)
+        self.mode = mode
+        self.video_quality = video_quality
+        self.cookie_source = cookie_source
+        self.browser_name = browser_name
+        self.cookie_file = cookie_file
         self._stopped = False
 
     @Slot()
@@ -29,10 +44,19 @@ class DownloadWorker(QObject):
         success_count = 0
         failure_count = 0
 
-        downloader = AudioDownloader(output_dir=self.output_dir, logger=self.log.emit)
-        total = len(self.urls)
+        downloader = MediaDownloader(
+            output_dir=self.output_dir,
+            mode=self.mode,
+            video_quality=self.video_quality,
+            cookie_source=self.cookie_source,
+            browser_name=self.browser_name,
+            cookie_file=self.cookie_file,
+            logger=self.log.emit,
+        )
+        total = len(self.tasks)
 
-        for index, url in enumerate(self.urls):
+        for index, task in enumerate(self.tasks):
+            url = task.url
             if self._stopped:
                 self.log.emit("Download canceled by user.")
                 break
@@ -50,8 +74,9 @@ class DownloadWorker(QObject):
                     self.task_retry.emit(index, retry_no, self.max_retries, retry_message)
                     self.log.emit(f"[{index + 1}/{total}] {retry_message}: {url}")
 
-                result = downloader.download(
-                    url,
+                result = downloader.download_with_filename(
+                    url=url,
+                    filename=task.filename,
                     progress_callback=lambda progress, idx=index: self._on_progress(idx, progress),
                 )
                 if result.success:

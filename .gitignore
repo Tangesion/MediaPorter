@@ -21,6 +21,8 @@ htmlcov/
 
 # Runtime output
 downloads/
+.auth/
+*.cookies.txt
 
 # IDE/editor files
 .vscode/

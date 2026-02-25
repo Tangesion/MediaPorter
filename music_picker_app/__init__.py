@@ -1,4 +1,4 @@
-"""Music picker desktop app package."""
+"""MediaPorter desktop app package."""
 
 __all__ = [
     "config",

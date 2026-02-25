@@ -16,7 +16,7 @@ python -m pip install -r requirements.txt
 Write-Host "Installing packager..."
 python -m pip install pyinstaller
 
-Write-Host "Building music-picker.exe ..."
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name music-picker main.py
+Write-Host "Building MediaPorter.exe ..."
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name MediaPorter main.py
 
-Write-Host "Build completed. Output: .\\dist\\music-picker.exe"
+Write-Host "Build completed. Output: .\\dist\\MediaPorter.exe"

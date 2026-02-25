@@ -1,4 +1,4 @@
-name: release-windows
+name: release-mediaporter-windows
 
 on:
   push:
@@ -32,28 +32,28 @@ jobs:
       - name: Build exe
         shell: pwsh
         run: |
-          python -m PyInstaller --noconfirm --clean --onefile --windowed --name music-picker main.py
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name MediaPorter main.py
 
       - name: Generate SHA256
         shell: pwsh
         run: |
-          $hash = (Get-FileHash .\dist\music-picker.exe -Algorithm SHA256).Hash.ToLower()
-          $line = "$hash  music-picker.exe"
-          Set-Content -Path .\dist\music-picker.exe.sha256 -Value $line -Encoding ascii
+          $hash = (Get-FileHash .\dist\MediaPorter.exe -Algorithm SHA256).Hash.ToLower()
+          $line = "$hash  MediaPorter.exe"
+          Set-Content -Path .\dist\MediaPorter.exe.sha256 -Value $line -Encoding ascii
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: music-picker-windows
+          name: mediaporter-windows
           path: |
-            dist/music-picker.exe
-            dist/music-picker.exe.sha256
+            dist/MediaPorter.exe
+            dist/MediaPorter.exe.sha256
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/music-picker.exe
-            dist/music-picker.exe.sha256
+            dist/MediaPorter.exe
+            dist/MediaPorter.exe.sha256
           generate_release_notes: true

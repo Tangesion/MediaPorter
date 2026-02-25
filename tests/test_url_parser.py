@@ -1,6 +1,6 @@
 import unittest
 
-from music_picker_app.url_parser import (
+from mediaporter_app.url_parser import (
     diagnose_urls,
     extract_urls,
     filter_supported_urls,

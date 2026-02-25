@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from music_picker_app.downloader import MediaDownloader
+from mediaporter_app.downloader import MediaDownloader
 
 
 class DownloaderTests(unittest.TestCase):

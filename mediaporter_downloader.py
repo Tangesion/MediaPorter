@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from music_picker_app.downloader import AudioDownloader
+from mediaporter_app.downloader import AudioDownloader
 
 
 def download_audio(video_url: str, output_dir: str = "downloads") -> bool:
